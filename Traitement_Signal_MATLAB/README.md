@@ -1,76 +1,39 @@
-# Traitement du signal sous MATLAB
+# MATLAB Signal Processing Exercises
 
-## Vue d'ensemble
-Recueil de scripts MATLAB écrits pendant les travaux pratiques de traitement du signal (formation 2023–2026) : échantillonnage et quantification, analyse spectrale, corrélation, détection radar par intercorrélation, interpolation/suréchantillonnage, filtrage RIF, filtre RC et modulation d'amplitude.
+Nine scripts exploring time-domain statistics, spectral representations, filtering and communication-style signals.
 
-## Objectifs
-- Observer l'échantillonnage, le repliement spectral et l'erreur de quantification.
-- Manipuler la FFT et la densité spectrale de puissance.
-- Utiliser l'autocorrélation et l'intercorrélation pour extraire un signal du bruit.
-- Comprendre l'interpolation de Shannon (sinc) et le suréchantillonnage par insertion de zéros.
-- Caractériser des filtres (RIF simples, RC passe-bas) par leur réponse en fréquence.
+## Script map
 
-## Architecture
-Scripts indépendants, un par thème, dans `src/`.
-
-| Script | Contenu |
+| Source | Focus |
 |---|---|
-| `autocorrelation_signal_bruite.m` | Sinus (a=2, f0=50 Hz, fe=500 Hz) + bruit blanc (σ²=5), autocorrélation `xcorr` sur L=40 retards |
-| `dsp_et_filtrage_frequentiel.m` | FFT, `fftshift`, filtrage par masque fréquentiel de ±2 Hz autour de f0 |
-| `densite_spectrale_puissance.m` | Estimation de la densité spectrale de puissance |
-| `detection_radar_intercorrelation.m` | Motif sinus × gaussienne, 3 cibles (positions 50, 100, 200) dans un signal reçu de 300 échantillons bruité (σ²=0.2), détection par `xcorr(r,m)`, DSE par FFT |
-| `interpolation_surechantillonnage_filtres_rif.m` | DSP (`semilogy`), interpolation sinc à t=1.3 (fenêtre ±10), insertion de zéros, filtres H1=[1 1] et H2=[1 2 1]/2, `freqz`, fréquence de coupure à −3 dB, `filter` |
-| `convolution_signaux_rectangulaires.m` | Convolution de signaux rectangulaires |
-| `spectre_signal_carre.m` | Spectre d'un signal carré (T0=20 ms, fe=500 Hz) |
-| `filtre_rc_passe_bas.m` | Module de H(f) d'un RC passe-bas (R=1 kΩ, C=100 nF), \|H\|=1/√(1+(f/fc)²) |
-| `modulation_amplitude.m` | Modulation AM (porteuse 10 kHz, message 1 kHz, m=1.5 → surmodulation) |
+| [Autocorrelation](src/autocorrelation_signal_bruite.m) | Noisy sinusoidal signal |
+| [Power spectral density](src/densite_spectrale_puissance.m) | Spectral analysis |
+| [Frequency filtering](src/dsp_et_filtrage_frequentiel.m) | FFT-domain selection |
+| [Radar cross-correlation](src/detection_radar_intercorrelation.m) | Simulated delayed returns in noise |
+| [Interpolation and FIR](src/interpolation_surechantillonnage_filtres_rif.m) | Sinc interpolation, zero insertion and simple FIR kernels |
+| [Rectangular convolution](src/convolution_signaux_rectangulaires.m) | Discrete convolution |
+| [Square-wave spectrum](src/spectre_signal_carre.m) | Harmonic structure |
+| [RC low-pass](src/filtre_rc_passe_bas.m) | First-order frequency response |
+| [Amplitude modulation](src/modulation_amplitude.m) | Carrier/message combination |
 
-`docs/tp1_traitement_numerique_du_signal_compte_rendu.docx` : compte rendu du TP 1 (échantillonnage, condition de Shannon-Nyquist, quantification, DSP).
+## Technical context
 
-## Matériel
-Aucun (simulation).
+The autocorrelation example uses a 50 Hz sinusoid sampled at 500 Hz with added noise. The radar exercise uses simulated returns rather than a physical radar acquisition.
 
-## Logiciel
-MATLAB (Signal Processing Toolbox pour `xcorr`, `freqz`, `square`). Version utilisée : À documenter.
+The RC study uses 1 kΩ and 100 nF, giving `fc = 1/(2*pi*R*C)`, approximately 1.59 kHz. The AM example uses a 10 kHz carrier, 1 kHz message and modulation index 1.5, illustrating overmodulation rather than standard envelope-detector operation.
 
-## Implémentation
-Chaque script génère ses signaux, les traite et trace les résultats (`plot`, `stem`, `semilogy`).
+## Running
 
-## Principes d'ingénierie
-- Lien temps/fréquence (FFT, DSP, théorème de Wiener-Khintchine).
-- Condition de Shannon-Nyquist et repliement spectral.
-- Gain en rapport signal/bruit par corrélation (filtrage adapté pour la détection radar).
-- Interpolation idéale et filtres d'interpolation.
+Open MATLAB from this module and run the selected script. Signal Processing Toolbox is required by operations such as `xcorr`, `freqz` and `square`.
 
-## Résultats
-Captures dans `assets/` (voir Médias). Les autres figures se régénèrent en relançant les scripts.
+The interpolation script references `signalbase.mat`, which is not included. Supply a compatible input or construct an explicitly documented replacement. Check MATLAB release compatibility for local functions in the convolution script.
 
-## Difficultés / limites
-- `interpolation_surechantillonnage_filtres_rif.m` charge `signalbase.mat`, fichier non disponible dans le dépôt.
-- `convolution_signaux_rectangulaires.m` définit des fonctions locales avant le script : nécessite une version récente de MATLAB (ou de déplacer les fonctions en fin de fichier).
-- Le compte rendu du TP 1 est une version de travail.
+## Reproducibility
 
-## Structure
-```
-Traitement_Signal_MATLAB/
-├── README.md
-├── .gitignore
-├── src/      scripts .m
-├── docs/     compte rendu du TP 1
-└── assets/   captures
-```
+Random-noise experiments need a recorded seed for direct comparison. Spectral plots should identify sampling rate, FFT length, normalisation and frequency units. Correlation-based delay detection also needs a mapping from lag to physical range before being treated as an instrument measurement.
 
-## Exécution
-Ouvrir MATLAB dans `src/` puis lancer un script, par ex. `detection_radar_intercorrelation`.
+No scripts were rerun for this README update, and no fresh detection accuracy or numerical benchmark is claimed.
 
-## Médias
-| DSP du signal échantillonné (TP 1) | Repliement spectral (TP 1) |
-|---|---|
-| ![](assets/tp1_dsp_de_x.png) | ![](assets/tp1_repliement_spectral.png) |
+## Licence
 
-| Signal bruité | DSP | Signal filtré |
-|---|---|---|
-| ![](assets/tp_bruit_signal_xn.png) | ![](assets/tp_bruit_dsp_de_y.png) | ![](assets/tp_bruit_y_filtre.png) |
-
-## Compétences
-MATLAB, échantillonnage et quantification, FFT, densité spectrale, auto/intercorrélation, détection en présence de bruit, filtrage RIF, interpolation, modulation AM.
+No project-wide licence has been defined.
