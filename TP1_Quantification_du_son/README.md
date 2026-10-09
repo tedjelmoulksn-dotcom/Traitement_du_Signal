@@ -1,68 +1,29 @@
-# Échantillonnage et quantification d'un signal sous Simulink
+# Sampling and Quantisation — Simulink Laboratory
 
-Simulation d'une chaîne de mesure numérique : échantillonnage d'une sinusoïde par un train d'impulsions, vérification du théorème de Shannon en faisant varier la pulsation du signal, puis quantification et observation de l'erreur, y compris sur un signal sonore.
+A simulated measurement chain illustrating sampling, spectral aliasing and quantisation error.
 
-![Schéma de simulation de l'échantillonnage](assets/tp1_quantif_qst1_schema.png)
+![Sampling model](assets/tp1_quantif_qst1_schema.png)
 
-## Vue d'ensemble
+## Model and parameters
 
-- **Cadre** : TP 1 « Électronique des chaînes de mesure », cycle ingénieur Instrumentation, Sup Galilée (Université Sorbonne Paris Nord), décembre 2024.
-- **État** : TP terminé. Le compte rendu conservé est un brouillon non relu.
+[`tp1_cdm.slx`](tp1_cdm.slx) contains the Simulink exercise. The initial sinusoid has angular frequency 50 rad/s. A coarse sampling period of 0.15 s is compared with `Te = 2*pi/1000 s`, corresponding to sampling angular frequency `we = 1000 rad/s`.
 
-## Objectifs
+The exercise varies input angular frequency through 100, 250, 920, 1080, 1920 and 2080 rad/s to observe aliases.
 
-Observer l'effet de la période d'échantillonnage sur la restitution d'un signal, repérer le repliement de spectre, puis mesurer l'erreur introduite par la quantification.
+## Sampling interpretation
 
-## Logiciel
+The strict band-limit condition is `we > 2*wmax`. With `we = 1000 rad/s`, frequencies below 500 rad/s satisfy that inequality; equality is the boundary and does not provide robust reconstruction for arbitrary phase.
 
-MATLAB / Simulink (`tp1_cdm.slx`) : générateur de signal, générateur d'impulsions, oscilloscope (Scope).
+A 1080 rad/s sinusoid can appear at an 80 rad/s alias after sampling. Compare the sampled waveform with the lower-frequency reference rather than inferring the original frequency from samples alone.
 
-## Implémentation
+## Quantisation study
 
-1. Sinusoïde de pulsation `w1 = 50 rad/s` échantillonnée par un générateur d'impulsions.
-2. Premier réglage (20 impulsions pour 3 s, soit `Te = 0,15 s`) : échantillonnage insuffisant.
-3. Réglage à 20 impulsions par période du signal : `Te = 2π/1000 s`, soit `we = 1000 rad/s`.
-4. Variation de `w1` (100, 250, 920, 1080, 1920, 2080 rad/s) à `we` constant pour observer le repliement.
-5. Quantification du signal, tracé de l'entrée, de la sortie et de l'erreur ; même chaîne appliquée à un son.
+The captures compare input, quantised output and error. Additional figures illustrate a sound example, but the original audio input is not included. The report does not provide a complete numerical error assessment.
 
-## Principes d'ingénierie
+## Reproducing
 
-- **Théorème de Shannon** : `we > 2 × w1`. Avec `we = 1000 rad/s`, la condition est respectée jusqu'à `w1 = 500 rad/s`.
-- **Repliement** : pour `w1 = 1080 rad/s`, le signal échantillonné se superpose à une sinusoïde de 80 rad/s (`1080 − 1000`) ; le compte rendu étudie aussi 920, 1920 et 2080 rad/s.
-- **Quantification** : erreur entre le signal d'entrée et le signal quantifié, fonction du pas.
+Open the model in MATLAB/Simulink, inspect generator periods and solver settings, run the simulation and inspect the Scopes. Supporting figures are in [`assets/`](assets/) and the working report is in [`docs/`](docs/).
 
-## Résultats
+## Validation and licence
 
-| Entrée, sortie et erreur de quantification | Erreur seule |
-|---|---|
-| ![Entrée, sortie et erreur](assets/tp1_signal_entree_sortie_erreur.png) | ![Erreur de quantification](assets/tp1_erreur.png) |
-
-Les autres captures du dossier `assets/` montrent les oscillogrammes pour chaque réglage et la chaîne appliquée au son. Les valeurs numériques de l'erreur ne sont pas relevées dans le brouillon : **à documenter**.
-
-## Difficultés et limites
-
-- Compte rendu à l'état de brouillon (fautes de frappe, figures non légendées) : à reprendre avant toute publication.
-- La partie « son » n'est décrite que par ses captures ; le fichier audio utilisé n'est pas joint.
-- La simulation n'a pas été rejouée lors de la rédaction de cette documentation.
-
-## Structure du dépôt
-
-```
-tp1_cdm.slx    Modèle Simulink
-assets/        Captures des schémas et des oscillogrammes
-docs/          Compte rendu (brouillon)
-```
-
-## Exécution
-
-Ouvrir `tp1_cdm.slx` dans MATLAB/Simulink, régler la période du générateur d'impulsions, lancer la simulation et observer le Scope.
-
-## Compétences démontrées
-
-- Échantillonnage, critère de Shannon et repliement de spectre.
-- Quantification et erreur associée.
-- Modélisation d'une chaîne d'acquisition sous Simulink.
-
-## Licence
-
-Aucune licence n'a été définie.
+Simulations were not rerun for this README update. No fresh quantisation accuracy or audio-quality values are reported. No project-wide licence has been defined.
