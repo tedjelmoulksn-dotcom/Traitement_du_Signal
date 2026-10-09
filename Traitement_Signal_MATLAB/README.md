@@ -2,6 +2,10 @@
 
 Nine scripts exploring time-domain statistics, spectral representations, filtering and communication-style signals.
 
+![Archived spectrum after frequency-domain filtering, showing components around ±50 Hz.](assets/tp_bruit_y_filtre.png)
+
+*Archived spectrum after frequency-domain filtering, showing components around ±50 Hz.*
+
 ## Script map
 
 | Source | Focus |
