@@ -85,3 +85,4 @@ venv/
 Thumbs.db
 ~$*
 .~lock.*
+/build/
