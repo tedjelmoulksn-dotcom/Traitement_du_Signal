@@ -27,9 +27,11 @@ Follow the module READMEs for dependencies and entry points. MATLAB scripts may 
 
 ## Validation and attribution
 
+The technical thread is representation: time samples become correlation lags or spectral bins in MATLAB, then codec words and persistent filter state in C. The instructor scaffold supplies hardware services; the isolated handler identifies the student's algorithmic contribution.
+
 The archive contains working reports and source fragments. The radar exercise uses simulated returns rather than hardware measurements. The SHARC program includes an instructor-provided scaffold; the student's contribution is explicitly identified in its module README.
 
-No fresh numerical benchmarks, DSP timing measurements or hardware tests are claimed. Original reports retain their language and attribution.
+The original reports retain their language and attribution and provide context for the implemented algorithms.
 
 ## Licence
 
