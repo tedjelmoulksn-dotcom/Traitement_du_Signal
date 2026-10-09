@@ -1,43 +1,18 @@
-# Signal Processing — MATLAB, Simulink and Embedded DSP
+# Traitement du signal
 
-MATLAB, Simulink and SHARC DSP exercises in filtering, sampling and signal analysis.
+Travaux de traitement du signal réalisés pendant le cycle ingénieur Instrumentation (Sup Galilée, 2023–2026) : simulation sous MATLAB et Simulink, puis implantation temps réel sur DSP.
 
-![Archived Simulink comparison of signal input, quantised output and error.](TP1_Quantification_du_son/assets/tp1_signal_entree_sortie_erreur.png)
-
-*Archived Simulink comparison of signal input, quantised output and error.*
-
-## Modules
-
-| Module | Content | Platform |
+| Dossier | Contenu | Outils |
 |---|---|---|
-| [MATLAB signal processing](Traitement_Signal_MATLAB/) | Correlation, spectral analysis, filtering, interpolation, AM and simulated radar detection | MATLAB |
-| [Sampling and quantisation](TP1_Quantification_du_son/) | Sampled signals, aliasing and quantisation coursework | Simulink |
-| [SHARC IIR filter](DSP_SHARC_Filtre_IIR/) | Codec/SPORT/DMA processing chain and second-order IIR exercise | ADSP-21060, AD1847, C |
+| [`scripts_matlab/`](scripts_matlab/) | 9 scripts : autocorrélation, DSP, filtrage fréquentiel, détection radar par intercorrélation, interpolation et filtres RIF, filtre RC, modulation AM ; compte rendu du TP 1 | MATLAB |
+| [`echantillonnage_quantification_simulink/`](echantillonnage_quantification_simulink/) | Échantillonnage, condition de Shannon, repliement, quantification d'un signal sonore | Simulink |
+| [`dsp_sharc_filtre_iir/`](dsp_sharc_filtre_iir/) | Filtre IIR d'ordre 2 en temps réel sur DSP ADSP-21060 + codec AD1847 (canevas de l'enseignant + routine de filtrage) ; compte rendu du TP DSP dans `docs/` | C, DSP SHARC |
 
-## Engineering progression
+Chaque dossier contient son propre README détaillé.
 
-The MATLAB exercises explore signal properties and numerical algorithms. The Simulink work connects sampling choices with aliasing. The DSP exercise then exposes hardware integration: signed audio samples, serial-port frames, chained DMA and receive-interrupt processing.
+## Compétences
+FFT, densité spectrale, corrélation, détection en présence de bruit, filtrage RIF et IIR, échantillonnage et quantification, traitement temps réel sous interruption.
 
-This progression also highlights the difference between an algorithm's mathematical state and its lifetime in C memory. The corrected receive handler retains filter state across samples and evaluates one recurrence per incoming left-channel sample. Portable regression tests cover numerical response and the actual ISR history.
-
-## Getting started
-
-```bash
-git clone https://github.com/tedjelmoulksn-dotcom/Traitement_du_Signal.git
-cd Traitement_du_Signal
-```
-
-Follow the module READMEs for dependencies and entry points. MATLAB scripts may require Signal Processing Toolbox. The hardware scaffold requires the original board support and a compatible Analog Devices toolchain. The corrected filtering kernel and isolated ISR can be tested on a host with `make -C DSP_SHARC_Filtre_IIR test`.
-
-## Validation and attribution
-
-The technical thread is representation: time samples become correlation lags or spectral bins in MATLAB, then codec words and persistent filter state in C. The instructor scaffold supplies hardware services; the isolated handler identifies the student's algorithmic contribution.
-
-The archive contains working reports and source fragments. The radar exercise uses simulated returns rather than hardware measurements. The SHARC program includes an instructor-provided scaffold; the student's contribution is explicitly identified in its module README.
-
-The original reports retain their language and attribution and provide context for the implemented algorithms.
-
-## Licence
-
-No project-wide licence has been defined. Instructor and third-party material retains its original authorship.
-
+## Remarques
+- Le compte rendu de `dsp_sharc_filtre_iir/docs/` est un Google Doc : l'exporter en PDF avant `git add`.
+- Aucune licence n'a été définie.
