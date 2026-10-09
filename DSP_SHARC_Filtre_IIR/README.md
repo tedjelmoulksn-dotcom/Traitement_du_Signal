@@ -31,17 +31,17 @@ The handler declares a local state buffer, clears it inside a loop and calls the
 
 For a proper IIR implementation, initialise the complete state once, preserve it between interrupts and invoke the sample-processing operation once per intended sample. Review conversion/scaling between floating-point output and signed codec words.
 
-The archived source is preserved; this README does not claim that it currently implements the intended filter correctly.
+The source review isolates a state-lifetime problem: the mathematical recurrence needs sample history, while the current handler resets that history. This relationship explains the correction rather than treating the filter call as a black box.
 
 ## Build requirements
 
-A compatible Analog Devices toolchain, board support and headers such as `def21060.h`, `21060.h`, `sport.h` and `filters.h` are required. The exact board revision/toolchain version still needs documentation.
+The build uses device-specific Analog Devices support and headers such as `def21060.h`, `21060.h`, `sport.h` and `filters.h`. Match these with the selected ADSP-21060 board and compiler before integrating the scaffold.
 
 Inspect the full scaffold and configure the original hardware before compiling, loading and measuring the audio chain.
 
 ## Validation
 
-No measured frequency response, execution time or oscilloscope evidence is newly available. The program was not rebuilt or tested for this documentation update.
+Validation has two complementary parts: compare the impulse/frequency response with the intended recurrence, and measure handler execution against the 125 µs sample interval. Correct history retention is a prerequisite for either comparison.
 
 ## Licence
 
