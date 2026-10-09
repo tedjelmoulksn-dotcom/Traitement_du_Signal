@@ -1,6 +1,10 @@
 # Signal Processing — MATLAB, Simulink and Embedded DSP
 
-An instrumentation portfolio spanning numerical signal analysis, sampling and quantisation, and interrupt-driven audio processing on a SHARC DSP.
+MATLAB, Simulink and SHARC DSP exercises in filtering, sampling and signal analysis.
+
+![Archived Simulink comparison of signal input, quantised output and error.](TP1_Quantification_du_son/assets/tp1_signal_entree_sortie_erreur.png)
+
+*Archived Simulink comparison of signal input, quantised output and error.*
 
 ## Modules
 
