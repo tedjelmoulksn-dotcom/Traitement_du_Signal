@@ -1,78 +1,48 @@
-# Filtre IIR temps réel sur DSP SHARC (ADSP-21060)
+# SHARC DSP — Interrupt-Driven IIR Filtering Exercise
 
-## Vue d'ensemble
-TP de DSP (cycle ingénieur, 2e année, 2024–2025) : implantation d'un filtre numérique récursif (IIR) d'ordre 2 dans la routine d'interruption de réception d'un DSP Analog Devices SHARC ADSP-21060 relié à un codec audio AD1847.
+A C laboratory on an Analog Devices ADSP-21060 connected to an AD1847 audio codec, exploring sample-by-sample filtering in a DMA receive-interrupt handler.
 
-> **Paternité du code.** Le programme `src/BUTTER.C` est construit sur le **canevas `CANEVAS.C` fourni par l'enseignant du TP** : initialisation du DSP et du timer, configuration du port série SPORT0 en TDM, DMA chaînées, initialisation et autocalibration du codec, `main()`. Ce canevas et ses commentaires sont l'œuvre de l'enseignant.
-> **Ma contribution** se limite à la routine de traitement du signal `it_dma_receive` (coefficients du filtre, appel à `iir()`, écriture dans `tx_buf[1]`) et aux `#include`/`#define` associés. Elle est isolée dans `src/filtre_iir_it_dma_receive.c`.
+## Attribution
 
-## Objectifs
-- Comprendre la chaîne d'acquisition temps réel codec → SPORT0 → DMA → interruption → DSP → codec.
-- Implanter un filtre IIR avec la fonction `iir()` de la bibliothèque de traitement du signal du compilateur.
+[`src/BUTTER.C`](src/BUTTER.C) is based on the instructor's `CANEVAS.C` scaffold. DSP/timer initialisation, SPORT0/TDM configuration, chained DMA, codec setup and the main program originate from that scaffold.
 
-## Architecture
-```mermaid
-flowchart LR
- IN[Entrée audio Line1] --> ADC[CAN du codec AD1847]
- ADC -- SPORT0 / DMA --> RX[rx_buf]
- RX --> IT[it_dma_receive<br/>filtre IIR]
- IT --> TX[tx_buf]
- TX -- SPORT0 / DMA --> DAC[CNA du codec]
- DAC --> OUT[Sortie audio]
+The student's contribution is the filtering work in `it_dma_receive` and associated includes/definitions. It is isolated in [`src/filtre_iir_it_dma_receive.c`](src/filtre_iir_it_dma_receive.c). This attribution is part of the technical scope.
+
+## Acquisition and processing chain
+
+The scaffold documents a 40 MHz DSP clock and signed 16-bit stereo audio at 8 kHz. SPORT0 exchanges TDM words via chained DMA. On reception, the handler reads the left-channel sample from `rx_buf[1]`, calls `iir()` and writes `tx_buf[1]`.
+
+At 8 kHz, the nominal sample interval is 125 µs. A successful real-time implementation must fit its processing and interrupt overhead into the available schedule.
+
+## Filter representation
+
+The archived coefficients are:
+
+```c
+a = {0.021, 0.042, 0.021}
+b = {1.000, -1.547, 0.632}
 ```
 
-## Matériel
-- DSP Analog Devices ADSP-21060 (SHARC), horloge 40 MHz d'après les commentaires du canevas ; référence exacte de la carte : À documenter.
-- Codec AD1847, configuré par le canevas en 16 bits signés stéréo à 8 kHz.
+They suggest a second-order low-pass form with near-unit DC gain under the corresponding transfer-function convention. Verify the library's coefficient layout, signs and state-buffer requirements before assigning a precise response or cutoff.
 
-## Logiciel
-Chaîne de compilation C Analog Devices pour ADSP-21060 (`def21060.h`, `21060.h`, `sport.h`, `filters.h`). Version : À documenter.
+## Critical state-lifetime issue
 
-## Implémentation
-| Fichier | Contenu | Auteur |
-|---|---|---|
-| `src/BUTTER.C` | Programme complet tel qu'utilisé au TP (canevas + routine de filtrage) | Canevas : enseignant ; `it_dma_receive` : moi |
-| `src/filtre_iir_it_dma_receive.c` | Extrait de la seule routine de filtrage, recopiée sans correction | Moi |
+The handler declares a local state buffer, clears it inside a loop and calls the filter repeatedly during that same loop. Recursive history is therefore not retained correctly across incoming samples, and the buffer is only partially initialised at the first calls.
 
-À chaque interruption DMA de réception, l'échantillon de la voie gauche (`rx_buf[1]`) est filtré par `iir()` puis renvoyé sur la voie gauche (`tx_buf[1]`). Un timer fait clignoter une LED (sortie FLAG2) 4 fois par seconde (canevas).
+For a proper IIR implementation, initialise the complete state once, preserve it between interrupts and invoke the sample-processing operation once per intended sample. Review conversion/scaling between floating-point output and signed codec words.
 
-Coefficients présents dans le code :
-- `a = {0.021, 0.042, 0.021}`
-- `b = {1, -1.547, 0.632}`
+The archived source is preserved; this README does not claim that it currently implements the intended filter correctly.
 
-Avec ces valeurs, `(0.021 + 0.042 + 0.021) / (1 − 1.547 + 0.632) ≈ 0,99` : le filtre a un gain statique proche de 1 et la forme d'un passe-bas d'ordre 2 (calcul fait à partir des coefficients ; méthode de calcul des coefficients et fréquence de coupure : À documenter).
+## Build requirements
 
-## Principes d'ingénierie
-- Traitement échantillon par échantillon sous interruption.
-- Filtre récursif d'ordre 2 et état interne du filtre.
-- Communication DSP–codec en TDM avec DMA chaînées.
+A compatible Analog Devices toolchain, board support and headers such as `def21060.h`, `21060.h`, `sport.h` and `filters.h` are required. The exact board revision/toolchain version still needs documentation.
 
-## Résultats
-Aucune mesure conservée : À documenter (réponse fréquentielle mesurée, captures d'oscilloscope).
+Inspect the full scaffold and configure the original hardware before compiling, loading and measuring the audio chain.
 
-## Difficultés / limites
-- Dans `it_dma_receive`, le tableau `state[]` est déclaré localement et remis à zéro dans la boucle avant chaque appel à `iir()` : l'état du filtre n'est donc pas conservé d'un échantillon à l'autre. Pour un vrai filtrage récursif, `state` devrait être `static` et initialisé une seule fois. Le code est laissé tel quel.
-- Plusieurs versions intermédiaires existent (`BUTTER_2`, `try1`, `try2`, `try3`, `PRIME`) ; seule `BUTTER.C` est reprise.
-- L'énoncé du TP n'est pas publié.
+## Validation
 
-## Structure
-```
-DSP_SHARC_Filtre_IIR/
-├── README.md
-├── .gitignore
-└── src/
-    ├── BUTTER.C                      (canevas de l'enseignant + ma routine)
-    └── filtre_iir_it_dma_receive.c   (ma routine seule)
-```
-
-## Exécution
-Nécessite la carte DSP et la chaîne Analog Devices : compiler `src/BUTTER.C`, charger le programme puis injecter un signal sur l'entrée Line1 et observer la sortie Line.
-
-## Médias
-À documenter.
-
-## Compétences
-DSP temps réel, filtrage IIR, interruptions et DMA, programmation C embarquée sur SHARC.
+No measured frequency response, execution time or oscilloscope evidence is newly available. The program was not rebuilt or tested for this documentation update.
 
 ## Licence
-Aucune licence n'a été définie. Le canevas reste la propriété de son auteur (enseignant du TP).
+
+No project-wide licence has been defined. The instructor scaffold retains its original authorship.
