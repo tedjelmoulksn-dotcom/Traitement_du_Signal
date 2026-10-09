@@ -18,7 +18,7 @@ A 1080 rad/s sinusoid can appear at an 80 rad/s alias after sampling. Compare th
 
 ## Quantisation study
 
-The captures compare input, quantised output and error. Additional figures illustrate a sound example, but the original audio input is not included. The report does not provide a complete numerical error assessment.
+The captures place input, quantised output and error on the same time axis. Additional figures extend the chain to a sound example. For reproduction, choose and identify an audio input, then use the same quantiser step and amplitude convention throughout the comparison.
 
 ## Reproducing
 
@@ -26,4 +26,4 @@ Open the model in MATLAB/Simulink, inspect generator periods and solver settings
 
 ## Validation and licence
 
-Simulations were not rerun for this README update. No fresh quantisation accuracy or audio-quality values are reported. No project-wide licence has been defined.
+Evaluate aliasing by comparing sampled waveforms and quantisation by examining error amplitude/distribution. Keep the sampling period and quantiser step visible so that the two effects can be distinguished. No project-wide licence has been defined.
