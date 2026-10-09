@@ -32,7 +32,7 @@ The interpolation script references `signalbase.mat`, which is not included. Sup
 
 Random-noise experiments need a recorded seed for direct comparison. Spectral plots should identify sampling rate, FFT length, normalisation and frequency units. Correlation-based delay detection also needs a mapping from lag to physical range before being treated as an instrument measurement.
 
-No scripts were rerun for this README update, and no fresh detection accuracy or numerical benchmark is claimed.
+Use controlled input signals to interpret each algorithm: known delays for correlation, known tones for spectral selection and a documented modulation index for AM. This ties the output to the mechanism being exercised.
 
 ## Licence
 
