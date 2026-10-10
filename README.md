@@ -2,6 +2,10 @@
 
 MATLAB, Simulink and SHARC DSP exercises covering spectral analysis, correlation, radar detection, sampling, quantisation and digital filtering.
 
+![Traitement du Signal project overview](TP1_Quantification_du_son/assets/tp1_quantif_son_schema.png)
+
+*Original Simulink audio-sampling and quantisation model from the laboratory study.*
+
 ## Repository guide
 
 | Location | Contents |
