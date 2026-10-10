@@ -1,18 +1,24 @@
-# Traitement du signal
+# Signal Processing Laboratories
 
-Travaux de traitement du signal réalisés pendant le cycle ingénieur Instrumentation (Sup Galilée, 2023–2026) : simulation sous MATLAB et Simulink, puis implantation temps réel sur DSP.
+MATLAB, Simulink and SHARC DSP exercises covering spectral analysis, correlation, radar detection, sampling, quantisation and digital filtering.
 
-| Dossier | Contenu | Outils |
-|---|---|---|
-| [`scripts_matlab/`](scripts_matlab/) | 9 scripts : autocorrélation, DSP, filtrage fréquentiel, détection radar par intercorrélation, interpolation et filtres RIF, filtre RC, modulation AM ; compte rendu du TP 1 | MATLAB |
-| [`echantillonnage_quantification_simulink/`](echantillonnage_quantification_simulink/) | Échantillonnage, condition de Shannon, repliement, quantification d'un signal sonore | Simulink |
-| [`dsp_sharc_filtre_iir/`](dsp_sharc_filtre_iir/) | Filtre IIR d'ordre 2 en temps réel sur DSP ADSP-21060 + codec AD1847 (canevas de l'enseignant + routine de filtrage) ; compte rendu du TP DSP dans `docs/` | C, DSP SHARC |
+## Repository guide
 
-Chaque dossier contient son propre README détaillé.
+| Location | Contents |
+|---|---|
+| [Traitement_Signal_MATLAB/](Traitement_Signal_MATLAB/) | MATLAB scripts and signal-processing reports |
+| [TP1_Quantification_du_son/](TP1_Quantification_du_son/) | Simulink sampling and audio quantisation study |
+| [DSP_SHARC_Filtre_IIR/](DSP_SHARC_Filtre_IIR/) | Second-order IIR filter, interrupt routine and host tests |
+| [archive/](archive/) | Original laboratory captures, scripts and development variants |
 
-## Compétences
-FFT, densité spectrale, corrélation, détection en présence de bruit, filtrage RIF et IIR, échantillonnage et quantification, traitement temps réel sous interruption.
+## Getting started
 
-## Remarques
-- Le compte rendu de `dsp_sharc_filtre_iir/docs/` est un Google Doc : l'exporter en PDF avant `git add`.
-- Aucune licence n'a été définie.
+For MATLAB, open the relevant script from `Traitement_Signal_MATLAB/src/` and run it with that folder as the working directory. For Simulink, open `TP1_Quantification_du_son/tp1_cdm.slx`. DSP host checks use:
+
+```bash
+make -C DSP_SHARC_Filtre_IIR test
+```
+
+## Project context
+
+Canonical modules are separated from original imports. The SHARC hardware routine targets ADSP-21060 with an AD1847 codec; host tests do not replace hardware validation.
